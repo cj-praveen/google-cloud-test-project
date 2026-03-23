@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Website Generator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 300px;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #22c55e;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        iframe {
+            width: 100%;
+            height: 500px;
+            margin-top: 30px;
+            border: 2px solid #ccc;
+            background: white;
+        }
+
+        #loading {
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 AI Website Generator</h1>
+
+    <input type="text" id="prompt" placeholder="Enter website idea..." />
+    <button onclick="generate()">Generate</button>
+
+    <p id="loading">Generating... ⏳</p>
+
+    <iframe id="preview"></iframe>
+
+    <script>
+        async function generate() {
+            const prompt = document.getElementById("prompt").value;
+            const loading = document.getElementById("loading");
+            const iframe = document.getElementById("preview");
+
+            if (!prompt) {
+                alert("Please enter a prompt");
+                return;
+            }
+
+            loading.style.display = "block";
+
+            try {
+                const response = await fetch("/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+
+                loading.style.display = "none";
+
+                if (data.code) {
+                    iframe.srcdoc = data.code;
+                } else {
+                    alert("Error: " + data.error);
+                }
+
+            } catch (err) {
+                loading.style.display = "none";
+                alert("Request failed");
+            }
+        }
+    </script>
+
+</body>
+</html>
